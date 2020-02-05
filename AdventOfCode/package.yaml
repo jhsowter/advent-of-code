@@ -3,7 +3,6 @@ version:             0.1.0.0
 
 extra-source-files:
 - README.md
-- ChangeLog.md
 
 # Metadata used when publishing your package
 # synopsis:            Short description of your package
@@ -21,9 +20,9 @@ library:
   source-dirs: src
 
 executables:
-  ScottyDemo-exe:
+  AdventOfCode-exe:
     main:                Main.hs
-    source-dirs:         app
+    source-dirs:         src
     ghc-options:
     - -threaded
     - -rtsopts

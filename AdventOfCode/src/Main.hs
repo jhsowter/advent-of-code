@@ -2,6 +2,7 @@ module Main (requiredFuel, totalRequired, main) where
 
 import System.IO (readLn)
 import Fuel
+import Program
 
 main :: IO ()
 main = do

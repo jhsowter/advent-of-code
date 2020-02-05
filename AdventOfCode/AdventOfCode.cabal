@@ -1,20 +1,43 @@
-name:                AdventOfCode
-version:             0.1.0.0
--- synopsis:
--- description:
-homepage:            https://github.com/githubuser/AdventOfCode#readme
-license:             BSD3
-license-file:        LICENSE
-author:              Author name here
-maintainer:          example@example.com
-copyright:           2020 Author name here
-category:            Web
-build-type:          Simple
-cabal-version:       >=1.10
-extra-source-files:  README.md
+cabal-version: 1.12
 
-executable AdventOfCode
-  hs-source-dirs:      src
-  main-is:             Main.hs
-  default-language:    Haskell2010
-  build-depends:       base >= 4.7 && < 5
+-- This file has been generated from package.yaml by hpack version 0.31.1.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 54c740fc38a449cfdf4d83748277c0a4feb86a73d036e2fe51fc952f1da62808
+
+name:           AdventOfCode
+version:        0.1.0.0
+description:    Please see the README
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+
+library
+  exposed-modules:
+      Fuel
+      Main
+      Program
+  other-modules:
+      Paths_AdventOfCode
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+  default-language: Haskell2010
+
+executable AdventOfCode-exe
+  main-is: Main.hs
+  other-modules:
+      Fuel
+      Program
+      Paths_AdventOfCode
+  hs-source-dirs:
+      src
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      AdventOfCode
+    , base >=4.7 && <5
+  default-language: Haskell2010
