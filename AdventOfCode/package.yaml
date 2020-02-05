@@ -19,6 +19,15 @@ dependencies:
 library:
   source-dirs: src
 
+tests:
+  test:
+    main: Tests.hs
+    source-dirs: test
+    dependencies:
+      - AdventOfCode
+      - hspec
+
+
 executables:
   AdventOfCode-exe:
     main:                Main.hs
