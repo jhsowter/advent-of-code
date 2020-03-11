@@ -1,7 +1,9 @@
 module Program where
 import Data.List (drop, take)
+import Debug.Trace (trace)
 
 data Opcode = ADD | MULT | HALT | UNKNOWN
+    deriving Show
 
 fromInt  :: Int -> Opcode
 fromInt 1 = ADD
@@ -11,20 +13,20 @@ fromInt _ = UNKNOWN
 
 -- counter, opcode, memory
 data State = State Int Opcode [Int]
+    deriving (Show)
 
-run :: [Int] -> [Int]
-run memory = complete final
+run :: [Int] -> State
+run memory = final
     where
         final = step initial
         initial = State 0 firstOp memory
         firstOp = fromInt (memory!!0)
 
-
 complete :: State -> [Int]
 complete (State c op s) = s
 
 -- from https://adventofcode.com/2019/day/2/input
-runProgram :: [Int]
+runProgram :: State
 runProgram = run [1,0,0,3,1,1,2,3,1,3,4,3,1,5,0,3,2,6,1,19,2,19,9,23,1,23,5,27,2,6,27,31,1,31,5,35,1,35,5,39,2,39,6,43,2,43,10,47,1,47,6,51,1,51,6,55,2,55,6,59,1,10,59,63,1,5,63,67,2,10,67,71,1,6,71,75,1,5,75,79,1,10,79,83,2,83,10,87,1,87,9,91,1,91,10,95,2,6,95,99,1,5,99,103,1,103,13,107,1,107,10,111,2,9,111,115,1,115,6,119,2,13,119,123,1,123,6,127,1,5,127,131,2,6,131,135,2,6,135,139,1,139,5,143,1,143,10,147,1,147,2,151,1,151,13,0,99,2,0,14,0]
 
 step :: State -> State
@@ -35,20 +37,22 @@ step (State counter ADD memory)
 step (State counter MULT memory)
     | counter + 4 > length memory = error "program counter exceeded the length of the program"
 
-step (State counter ADD memory) = step $ State nextCounter nextOp nextState
+step (State counter ADD memory) = step nextState
     where
         nextCounter = counter + 4
-        nextState = add counter memory
-        nextOp = fromInt $ nextState!!nextCounter
+        nextMemory = add counter memory
+        nextOp = fromInt $ nextMemory!!nextCounter
+        nextState = State nextCounter nextOp nextMemory
         
 step (State counter MULT memory) = step $ State nextCounter nextOp nextState
     where
         nextCounter = counter + 4
         nextState = mult counter memory
         nextOp = fromInt $ nextState!!nextCounter
-        
-step (State counter UNKNOWN memory) = step $ State (counter+1) (fromInt $ memory!!counter) memory
+
+-- step (State counter UNKNOWN memory) = step $ State (counter+1) (fromInt $ memory!!counter) memory
 step state = state
+state (State counter UNKNOWN memory) = error "unknown state"
 
 add :: Int -> [Int] -> [Int]
 add counter program = store address result program
@@ -81,7 +85,7 @@ store :: Int -> Int -> [Int] -> [Int]
 store 0 value program = [value] ++ drop 1 program
 store address value program
     | address < 0 = error "cannot store address < 0"
-    | address > length program = error $ "cannot store address > program length: " ++ show address
+    | address + 1 > length program = error $ "cannot store address > program length: " ++ show address
 store address value program = (take i program) ++ [value] ++ (drop (i+1) program)
     where
         i = max 0 address
