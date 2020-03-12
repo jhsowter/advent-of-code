@@ -4,8 +4,9 @@ import Test.Hspec        (Spec, describe, it, shouldBe, hspec)
 
 import Program
 
-runP m = d $ run m
-d (State c op m) = m
+runP :: [Int] -> [Int]
+runP m = toInts $ run (m!!1) (m!!2) m
+toInts (State c op m) = m
 
 main :: IO ()
 main = hspec $ do
@@ -25,7 +26,7 @@ main = hspec $ do
     it "3*6=18" $ do
       runP [2,6,1,5,99,0,3] `shouldBe` [2,6,1,5,99,18,3]
     it "19*9=171" $ do
-      runP [2,19,9,23,99,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] `shouldBe` [2,19,9,23,99,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,171]
+      runP [2,5,6,23,99,19,9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] `shouldBe` [2,5,6,23,99,19,9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,171]
 
   describe "small programs" $ do
     it "2,4,4,5,99,0 becomes 2,4,4,5,99,9801 (99 * 99 = 9801)" $ do
