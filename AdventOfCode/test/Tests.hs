@@ -5,7 +5,7 @@ import Test.Hspec        (Spec, describe, it, shouldBe, hspec)
 import Program
 
 runP :: [Int] -> [Int]
-runP m = toInts $ run (m!!1) (m!!2) m
+runP m = toInts $ run m
 toInts (State c op m) = m
 
 main :: IO ()
