@@ -21,15 +21,18 @@ day2Input = [1,0,0,3,1,1,2,3,1,3,4,3,1,5,0,3,2,6,1,19,2,19,9,23,1,23,5,27,2,6,27
 test :: Int -> Int -> Bool
 test x y = execute x y day2Input == 19690720
 
-findNumber = find [(x,y) | x <- [1..99], y <- [1..99]] False
+findIn :: Int -> [(Int,Int)]
+findIn n = take n [(x,y) | x <- [0..99], y <- [0..99]]
 
-find :: [(Int, Int)] -> Bool -> (Int, Int)
-find ((99,y):_) _ = (99,y)
-find ((x,99):_) _ = (x,99)
-find (h:t) true = h
-find (h:t) false = find t (test x y)
+findNumber :: (Int, Int)
+findNumber = find (findIn 9000)
+
+find :: [(Int, Int)] -> (Int, Int)
+find [] = (-1, -1)
+find (h:t) = if found then h else find t
     where 
         (x,y) = h
+        found = test x y
 
 -- from https://adventofcode.com/2019/day/2/input
 runProgram :: Int
