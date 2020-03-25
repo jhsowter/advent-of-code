@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 7254d4d5aa4158d169222c7fc7e0e53e7d4b44c10ef0ceae4b68c2ce0377d066
+-- hash: a9053d5ef341f3eba689ab2e3a06837cdbcd2dca8ae3610db1d25daa6255b131
 
 name:           AdventOfCode
 version:        0.1.0.0
@@ -17,6 +17,7 @@ extra-source-files:
 
 library
   exposed-modules:
+      Day3
       Fuel
       Main
       Program
@@ -26,11 +27,13 @@ library
       src
   build-depends:
       base >=4.7 && <5
+    , unordered-containers
   default-language: Haskell2010
 
 executable AdventOfCode-exe
   main-is: Main.hs
   other-modules:
+      Day3
       Fuel
       Program
       Paths_AdventOfCode
@@ -40,12 +43,15 @@ executable AdventOfCode-exe
   build-depends:
       AdventOfCode
     , base >=4.7 && <5
+    , unordered-containers
   default-language: Haskell2010
 
 test-suite test
   type: exitcode-stdio-1.0
   main-is: Tests.hs
   other-modules:
+      Day2Tests
+      Day3Tests
       Paths_AdventOfCode
   hs-source-dirs:
       test
@@ -53,4 +59,5 @@ test-suite test
       AdventOfCode
     , base >=4.7 && <5
     , hspec
+    , unordered-containers
   default-language: Haskell2010
