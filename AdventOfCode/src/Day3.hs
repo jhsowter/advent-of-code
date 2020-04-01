@@ -24,9 +24,6 @@ csv input =
 taxi :: Point -> Point -> Int
 taxi (p1, p2) (q1, q2) = abs(p1 - q1) + abs(p2 - q2)
 
--- main :: IO ()
--- main = splitOn "," path1
-    
 steps1 :: [Step]
 steps1 = map decode $ csv path1
 
@@ -38,12 +35,6 @@ decode ('R' : remain) = Step R (read remain)
 decode ('L' : remain) = Step L (read remain)
 decode ('U' : remain) = Step U (read remain)
 decode ('D' : remain) = Step D (read remain)
-
--- step to plot
--- record all points to the edge
--- R1003
--- 0,0 x,y
--- [(1,0), (2,0).. (1003,0)]
 
 closesttaxiconflict :: [Int] -> Int
 closesttaxiconflict taxies = minimum (filter (\t -> t /= 0) taxies)
@@ -61,9 +52,19 @@ toplot :: ([Point], [Point])
 toplot = (plotter steps1 (0,0), plotter steps2 (0,0))
 
 plotter :: [Step] -> Point -> [Point]
-plotter (s:rest) p = (plot p s) ++ plotter rest (last path)
+plotter (s:rest) p = (drop 1 path) ++ plotter rest (last path)
     where path = plot p s
 plotter [] p = []
+
+
+plotter' :: [Step] -> Point -> [Point]
+plotter' steps p = p : (plotter'' steps p)
+    where
+        plotter'' (s:rest) p =
+            let path = plot p s
+            in  (drop 1 path) ++ plotter'' rest (last path)
+        plotter'' [] _ = []
+
 
 plot :: Point -> Step -> [Point]
 plot point (Step direction distance) = map (move point direction) [0..distance]
@@ -73,3 +74,35 @@ move (x,y) R d = (x+d, y)
 move (x,y) L d = (x-d, y)
 move (x,y) U d = (x, y+d)
 move (x,y) D d = (x, y-d)
+
+-- path1 count x until y changes (1,0) (2,0)
+-- path2 
+
+-- ........... ^
+-- .+-----+... ↑|
+-- .|.....|...
+-- .|..+--X-+.
+-- .|..|..|.|.
+-- .|.-X--+.|.
+-- .|..|....|.
+-- .|.......|.
+-- .o-------+. → -> count until it goes up
+-- ...........
+
+part2 :: Int
+part2 = minimum distance
+    where distance = walkAll (plotter' steps1 (0,0)) (plotter' steps2 (0,0)) conflicts
+
+walkAll :: [Point] -> [Point] -> [Point] -> [Int]
+walkAll steps1 steps2 targets = map (\t -> walkTo steps1 t + walkTo steps2 t) targets
+
+walkTo :: [Point] -> Point -> Int
+walkTo steps target = pathLength
+    where
+        pathLength = length $ takeWhile ((/=) target) steps
+
+
+-- distanceTo :: [Point] -> Point -> Int
+
+-- subPath :: [Point] -> Point
+-- subPath path point = splitOn point
