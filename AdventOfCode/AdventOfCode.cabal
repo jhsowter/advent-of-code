@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 57204f1d7512a2d183a9bac489f038686340d6626611a21f2b8293b71d9bac1c
+-- hash: 5b0f6dcf489a82d468ea83448e1f83addecee48dc1f790611833b1c5c684dc20
 
 name:           AdventOfCode
 version:        0.1.0.0
@@ -20,7 +20,6 @@ library
       Day3
       Day4
       Fuel
-      Main
       Program
   other-modules:
       Paths_AdventOfCode
@@ -35,13 +34,9 @@ library
 executable AdventOfCode-exe
   main-is: Main.hs
   other-modules:
-      Day3
-      Day4
-      Fuel
-      Program
       Paths_AdventOfCode
   hs-source-dirs:
-      src
+      app
   ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       AdventOfCode

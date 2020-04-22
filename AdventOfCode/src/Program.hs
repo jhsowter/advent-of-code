@@ -12,14 +12,24 @@ toMode :: Int -> Mode
 toMode 0 = POS
 toMode 1 = IMM
 
+{-
+ABCDE
+ 1002
+
+DE - two-digit opcode,      02 == opcode 2
+ C - mode of 1st parameter,  0 == position mode
+ B - mode of 2nd parameter,  1 == immediate mode
+ A - mode of 3rd parameter,  0 == position mode,
+                                  omitted due to being a leading zero
+-}
+
 toOpcode  :: Int -> Opcode
-toOpcode n = fromParts oc m1 m2 m3
+toOpcode n = fromParts de c b a
     where
-        oc = n `mod` 100
-        m4 = n `div` 10000 `rem` 10
-        m3 = n `div` 1000 `rem` 10
-        m2 = n `div` 100 `rem` 10
-        m1 = n `div` 10 `rem` 10
+        de = n `mod` 100
+        a = n `div` 10000 `rem` 10
+        b = n `div` 1000 `rem` 10
+        c = n `div` 100 `rem` 10
 
 fromParts :: Int -> Int -> Int -> Int -> Opcode
 fromParts 01 m1 m2 _ = ADD (toMode m1) (toMode m2)
@@ -28,9 +38,6 @@ fromParts 03 m1 m2 _ = INPUT (toMode m1)
 fromParts 04 m1 m2 _ = OUTPUT (toMode m1)
 fromParts 99 m1 m2 _ = HALT
 fromParts _ _ _ _ = UNKNOWN
-
-digits :: Int -> [Int]
-digits n = [n `div` 10^p `rem` 10 | p <- [5, 4..0]]
 
 -- counter, opcode, memory
 data State = State Int Opcode [Int]
@@ -73,16 +80,10 @@ run memory =  step firstState
         firstOp = toOpcode (memory!!0)
 
 step :: State -> State
-step (State counter _ memory)
-    | counter > length memory = error "program counter exceeded the length of the program"
-step (State counter (ADD POS POS) memory)
-    | counter + 4 > length memory = error "program counter exceeded the length of the program"
-step (State counter (MULT POS POS) memory)
-    | counter + 4 > length memory = error "program counter exceeded the length of the program"
-step (State counter (ADD POS POS) memory) = step $ runInstruction counter add memory
-step (State counter (MULT POS POS) memory) = step $ runInstruction counter mult memory
-step state = state
-state (State counter UNKNOWN memory) = error "unknown state"
+step (State counter (ADD m1 m2) memory) = step $ runInstruction counter add memory
+step (State counter (MULT m1 m2) memory) = step $ runInstruction counter mult memory
+step state@(State counter (HALT) memory) = state
+step _ = error "unknown state"
 
 runInstruction :: Int -> (Int -> [Int] -> [Int]) -> [Int] -> State
 runInstruction counter instruction memory = State nextCounter nextOp nextMemory
