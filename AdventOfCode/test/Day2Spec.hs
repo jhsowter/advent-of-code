@@ -1,22 +1,23 @@
-module Day2Tests where 
+module Day2Spec (spec) where 
 import Program
+import Test.Hspec
 
 runP :: [Int] -> [Int]
 runP m = toInts $ run m
 toInts (State c op m) = m
 
 
-day2Tests :: IO ()
-day2Tests = 
-    describe "add" $ do
-      it "6+6=12" $ do
-          runP [1, 5, 6, 7, 99, 6, 6, 0] `shouldBe` [1, 5, 6, 7, 99, 6, 6, 12]
-        
-      it "102+1=12" $ do
-          runP [1, 5, 6, 7, 99, 102, 1, 0] `shouldBe` [1, 5, 6, 7, 99, 102, 1, 103]
+spec :: Spec
+spec = do
+  describe "add" $ do
+    it "6+6=12" $ do
+        runP [1, 5, 6, 7, 99, 6, 6, 0] `shouldBe` [1, 5, 6, 7, 99, 6, 6, 12]
+      
+    it "102+1=12" $ do
+        runP [1, 5, 6, 7, 99, 102, 1, 0] `shouldBe` [1, 5, 6, 7, 99, 102, 1, 103]
 
-      it "30+40=70" $ do
-        runP [1,9,10,3,99,3,11,0,99,30,40,50] `shouldBe` [1,9,10,70,99,3,11,0,99,30,40,50]
+    it "30+40=70" $ do
+      runP [1,9,10,3,99,3,11,0,99,30,40,50] `shouldBe` [1,9,10,70,99,3,11,0,99,30,40,50]
 
   describe "mult" $ do
     it "50*70=3500" $ do

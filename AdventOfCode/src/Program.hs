@@ -2,14 +2,35 @@ module Program where
 import Data.List (drop, take)
 import Debug.Trace (trace)
 
-data Opcode = ADD | MULT | HALT | UNKNOWN
-    deriving Show
+data Opcode = ADD Mode Mode | MULT Mode Mode | INPUT Mode | OUTPUT Mode | HALT | UNKNOWN
+    deriving (Eq, Show)
+        
+data Mode = IMM | POS
+    deriving (Eq, Show)
 
-fromInt  :: Int -> Opcode
-fromInt 1 = ADD
-fromInt 2 = MULT
-fromInt 99 = HALT
-fromInt _ = UNKNOWN
+toMode :: Int -> Mode
+toMode 0 = POS
+toMode 1 = IMM
+
+toOpcode  :: Int -> Opcode
+toOpcode n = fromParts oc m1 m2 m3
+    where
+        oc = n `mod` 100
+        m4 = n `div` 10000 `rem` 10
+        m3 = n `div` 1000 `rem` 10
+        m2 = n `div` 100 `rem` 10
+        m1 = n `div` 10 `rem` 10
+
+fromParts :: Int -> Int -> Int -> Int -> Opcode
+fromParts 01 m1 m2 _ = ADD (toMode m1) (toMode m2)
+fromParts 02 m1 m2 _ = MULT (toMode m1) (toMode m2)
+fromParts 03 m1 m2 _ = INPUT (toMode m1)
+fromParts 04 m1 m2 _ = OUTPUT (toMode m1)
+fromParts 99 m1 m2 _ = HALT
+fromParts _ _ _ _ = UNKNOWN
+
+digits :: Int -> [Int]
+digits n = [n `div` 10^p `rem` 10 | p <- [5, 4..0]]
 
 -- counter, opcode, memory
 data State = State Int Opcode [Int]
@@ -49,17 +70,17 @@ run :: [Int] -> State
 run memory =  step firstState
     where
         firstState =  State 0 firstOp memory
-        firstOp = fromInt (memory!!0)
+        firstOp = toOpcode (memory!!0)
 
 step :: State -> State
 step (State counter _ memory)
     | counter > length memory = error "program counter exceeded the length of the program"
-step (State counter ADD memory)
+step (State counter (ADD POS POS) memory)
     | counter + 4 > length memory = error "program counter exceeded the length of the program"
-step (State counter MULT memory)
+step (State counter (MULT POS POS) memory)
     | counter + 4 > length memory = error "program counter exceeded the length of the program"
-step (State counter ADD memory) = step $ runInstruction counter add memory
-step (State counter MULT memory) = step $ runInstruction counter mult memory
+step (State counter (ADD POS POS) memory) = step $ runInstruction counter add memory
+step (State counter (MULT POS POS) memory) = step $ runInstruction counter mult memory
 step state = state
 state (State counter UNKNOWN memory) = error "unknown state"
 
@@ -68,7 +89,7 @@ runInstruction counter instruction memory = State nextCounter nextOp nextMemory
     where 
         nextCounter = counter + 4
         nextMemory = instruction counter memory
-        nextOp = fromInt $ nextMemory!!nextCounter
+        nextOp = toOpcode $ nextMemory!!nextCounter
         nextState = State nextCounter nextOp nextMemory
 
 add :: Int -> [Int] -> [Int]

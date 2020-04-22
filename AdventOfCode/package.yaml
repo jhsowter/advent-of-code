@@ -17,16 +17,17 @@ dependencies:
 - base >= 4.7 && < 5
 - unordered-containers
 
+ghc-options:
+- -Wall
+
 library:
   source-dirs: src
 
 tests:
-  test:
-    main: Tests.hs
-    source-dirs: test
+  spec:
+    defaults: hspec/hspec@master
     dependencies:
-      - AdventOfCode
-      - hspec
+    - AdventOfCode
 
 
 executables:
