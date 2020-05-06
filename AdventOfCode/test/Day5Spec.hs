@@ -5,7 +5,7 @@ import Test.Hspec
 
 runP :: [Int] -> [Int]
 runP m = toInts $ run m
-toInts (State c op m) = m
+toInts (State c m o) = m
 
 spec :: Spec
 spec = do
@@ -29,10 +29,10 @@ spec = do
         toOpcode 1102 `shouldBe` MULT IMM IMM
 
     it "0003" $ do
-        toOpcode 0003 `shouldBe` INPUT POS
+        toOpcode 0003 `shouldBe` INPUT
 
     it "1103" $ do
-        toOpcode 1103 `shouldBe` INPUT IMM
+        toOpcode 1103 `shouldBe` INPUT
 
     it "0004" $ do
         toOpcode 0004 `shouldBe` OUTPUT POS
@@ -40,7 +40,8 @@ spec = do
     it "1104" $ do
         toOpcode 1104 `shouldBe` OUTPUT IMM
 
-
   describe "programs" $ do
     it "1002,4,3,4,33" $ do
       runP [1002,4,3,4,33] `shouldBe` [1002, 4, 3, 4, 99]
+    it "1001,4,3,5,99,33" $ do
+      runP [1001,5,3,5,99,33] `shouldBe` [1001, 5, 3, 5, 99, 36]
