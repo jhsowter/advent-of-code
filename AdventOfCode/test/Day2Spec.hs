@@ -4,7 +4,7 @@ import Test.Hspec
 
 runP :: [Int] -> [Int]
 runP m = toInts $ run m
-toInts (State c m o) = m
+toInts (State c m i o) = m
 
 
 spec :: Spec
