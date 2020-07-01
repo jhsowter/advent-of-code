@@ -1,10 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.31.1.
+-- This file has been generated from package.yaml by hpack version 0.31.0.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 5b0f6dcf489a82d468ea83448e1f83addecee48dc1f790611833b1c5c684dc20
+-- hash: dbd8e63a17178eeacbeadc7915a9d5f644a2d2eaa6f95f5aaa2ba1339f61b5c7
 
 name:           AdventOfCode
 version:        0.1.0.0
@@ -19,8 +19,11 @@ library
   exposed-modules:
       Day3
       Day4
+      Day6
+      Day7
       Fuel
       Program
+      ProgramDay7
   other-modules:
       Paths_AdventOfCode
   hs-source-dirs:
@@ -51,6 +54,7 @@ test-suite spec
       Day2Spec
       Day3Spec
       Day5Spec
+      Day7Spec
       Paths_AdventOfCode
   hs-source-dirs:
       test
@@ -58,7 +62,6 @@ test-suite spec
   build-depends:
       AdventOfCode
     , base >=4.7 && <5
-    , hspec ==2.*
+    , hspec
     , unordered-containers
   default-language: Haskell2010
-  build-tool-depends: hspec-discover:hspec-discover == 2.*

@@ -19,8 +19,9 @@ runPhases :: Int
 runPhases = maximum $ map runPhase phaseSettings
 
 -- 21760
+-- 6103515
 runPhase :: [Int] -> Int
-runPhase [a, b, c, d, e]  = oe
+runPhase [a, b, c, d, e]  = oe  
     where 
         (_, [oa]) = run [a, 0] 
         (_, [ob]) = run [b, oa]
