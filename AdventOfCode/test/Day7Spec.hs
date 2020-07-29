@@ -1,7 +1,7 @@
 {-# LANGUAGE NamedFieldPuns #-}
 
 module Day7Spec (spec) where 
-import ProgramDay7
+import Day9
 import Test.Hspec
 
 spec :: Spec

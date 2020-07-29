@@ -16,6 +16,7 @@ description:         Please see the README
 dependencies:
 - base >= 4.7 && < 5
 - unordered-containers
+- text
 
 ghc-options:
 - -Wall
