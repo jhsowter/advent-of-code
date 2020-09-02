@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 96a9187297df5eb8a8e9caf564c0cf8c8c0f95e1a4ab2fa50ce5435c7541ecb2
+-- hash: 61c3109f566d89c6263546d71033ffc86d98caa6c852833c0ece3cb66bc5650e
 
 name:           AdventOfCode
 version:        0.1.0.0
@@ -19,6 +19,7 @@ library
   exposed-modules:
       Day10
       Day11
+      Day12
       Day3
       Day4
       Day6
@@ -27,6 +28,7 @@ library
       Day8P2
       Day9
       Fuel
+      IntMachine
       Program
       ProgramDay7
   other-modules:
