@@ -14,11 +14,11 @@
 -- <x=5, y=10, z=4>
 
 newtype Position = Position (Int, Int, Int)
-    deriving Show
+    deriving (Show, Eq)
 newtype Velocity = Velocity (Int, Int, Int)
-    deriving Show
+    deriving (Show, Eq)
 newtype Moon = Moon (Position, Velocity)
-    deriving Show
+    deriving (Show, Eq)
 
 applyGravity :: [Moon] -> Moon -> Moon
 applyGravity ms m = foldl ag m ms 
@@ -46,13 +46,36 @@ applyPosition ms = map apply ms
         apply (Moon(Position(x, y, z), v@(Velocity(vx, vy, vz)))) = Moon(Position(x+vx, y+vy, z+vz), v)
 
 -- updateposition
-stepOnce ::  [Moon] -> Int -> [Moon]
-stepOnce ms _ = applyPosition $ allGravity ms
+stepOnce ::  [Moon] -> [Moon]
+stepOnce ms = applyPosition $ allGravity ms
+
+part2 :: [Moon] -> (Int, Int, Int, Int)
+part2 originalMoons = (countX, countY, countZ, lcm countX (lcm countY countZ) )
+    where
+        steps :: [[Moon]]
+        steps = iterate stepOnce originalMoons
+
+        countUntil test = length $ takeWhile (not . test) $ drop 1 steps
+        countX = succ $ succ $ countUntil moonsIsOriginalX
+        countY = succ $ succ $ countUntil moonsIsOriginalY
+        countZ = succ $ succ $ countUntil moonsIsOriginalZ
+
+        originalX = moonsX originalMoons
+        originalY = moonsY originalMoons
+        originalZ = moonsZ originalMoons
+        moonsIsOriginalX ms = originalX == (moonsX ms)
+        moonsIsOriginalY ms = originalY == (moonsY ms)
+        moonsIsOriginalZ ms = originalZ == (moonsZ ms)
+        moonsX = map (\(Moon(Position(x, _, _),_)) -> x)
+        moonsY = map (\(Moon(Position(_, y, _),_)) -> y)
+        moonsZ = map (\(Moon(Position(_, _, z),_)) -> z)
+
 
 -- foldl :: Foldable t => (b -> a -> b) -> b -> t a -> b
-step :: [Moon] -> Int -> Int
-step mx times = sum $ map (\m -> pot m * kin m) $ foldl stepOnce mx [1..times] 
+-- step :: [Moon] -> Int -> Int
+-- step mx times = sum $ map (\m -> pot m * kin m) $ foldl stepOnce mx [1..times] 
 -- [Moon (Position (2,1,-3),Velocity (-3,-2,1)),Moon (Position (1,-8,0),Velocity (-1,1,3)),Moon (Position (3,-6,1),Velocity (3,2,-3)),Moon (Position (2,0,4),Velocity (1,-1,-1))]
+
 
 -- [m | m <- []]
 
@@ -69,10 +92,12 @@ moons = [
     Moon (Position(-15, -3, 13), Velocity(0, 0, 0)),
     Moon (Position(3, 7, -4), Velocity(0, 0, 0))]
 
+
 --     <x=3, y=2, z=-6>
 -- <x=-13, y=18, z=10>
 -- <x=-8, y=-1, z=13>
 -- <x=5, y=10, z=4>
+jack :: [Moon]
 jack = [
     Moon (Position(3, 2, -6), Velocity(0, 0, 0)),
     Moon (Position(-13, 18, 10), Velocity(0, 0, 0)),
