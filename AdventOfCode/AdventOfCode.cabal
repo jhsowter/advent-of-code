@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 52424b2fd13e45ac76a32ddaca845f8dbf9300c37c01b2e182152ef14976a011
+-- hash: 371fdcddd5b90ac62b5da22f3f35687e1d8ac4b3d88e6b8b5f2afd0d86e2cc7d
 
 name:           AdventOfCode
 version:        0.1.0.0
@@ -21,6 +21,7 @@ library
       Day11
       Day12
       Day13
+      Day14
       Day3
       Day4
       Day6
@@ -38,7 +39,8 @@ library
       src
   ghc-options: -Wall
   build-depends:
-      base >=4.7 && <5
+      attoparsec
+    , base >=4.7 && <5
     , text
     , unordered-containers
   default-language: Haskell2010
@@ -52,6 +54,7 @@ executable AdventOfCode-exe
   ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       AdventOfCode
+    , attoparsec
     , base >=4.7 && <5
     , text
     , unordered-containers
@@ -71,6 +74,7 @@ test-suite spec
   ghc-options: -Wall
   build-depends:
       AdventOfCode
+    , attoparsec
     , base >=4.7 && <5
     , hspec
     , text

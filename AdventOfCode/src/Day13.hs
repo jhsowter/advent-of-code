@@ -26,12 +26,46 @@ part1 = countBlocks $ createMap output
 -}
 
 part2 :: IO ()
-part2 = draw $ createMap $ go $ runIncremental program
+part2 =  runGame playAI
+
+runGame :: (HashMap (Int, Int) Int -> IO String) -> IO ()
+runGame interact = go H.empty $ runIncremental program
     where
-        go stepResult  = 
+        go :: HashMap (Int, Int) Int -> StepResult -> IO()
+        go state stepResult = 
             case stepResult of 
-                Done (_, output) -> output
-                NeedsMoreInput output continue -> go $ continue [1]
+                Done (_, output) -> do
+                    let updated = updateMap output state
+                    draw $ updated
+                    print $ H.lookupDefault 0 (-1, 0) updated
+                NeedsMoreInput output continue -> do
+                    let updated = updateMap output state
+                    nextInput <- interact updated
+                    go updated $ continue [decodeInput nextInput]
+
+playInteractive :: HashMap (Int, Int) Int -> IO String
+playInteractive balls = do
+    draw balls
+    getLine
+
+playAI :: HashMap (Int, Int) Int -> IO String
+playAI m = return $ if ballX > paddleX then "d" else if ballX < paddleX then "a" else ""
+    where 
+        ((ballX, _), _) = find (\((x,y), t) -> t == 4) m
+        ((paddleX, _), _) = find (\((x,y), t) -> t == 3) m
+
+find :: (((Int, Int), Int) -> Bool) -> HashMap (Int, Int) Int -> ((Int, Int), Int)
+find pred hm = head $ filter pred $ H.toList hm
+
+updateMap :: [Int] -> HashMap (Int, Int) Int -> HashMap (Int, Int) Int
+updateMap [] a = a
+updateMap (x:y:c:rest) a = updateMap rest (H.insert (x,y) c a)
+updateMap l _ = error $ "unexpected number of outputs. remainder: " ++ show l
+
+decodeInput :: String -> Int
+decodeInput "a" = -1
+decodeInput "d" = 1
+decodeInput _ = 0
 
 draw :: HashMap (Int, Int) Int -> IO()
 draw hm = do
