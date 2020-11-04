@@ -84,7 +84,7 @@ recipeFor result recipes = case foundRecipes of
 walk :: [Recipe] -> Int
 walk recipes = go recipes $ singleton "FUEL" 1
     where 
-        go rs (traceShowId -> toCook)
+        go rs toCook
             | H.null toCook = error "404 ORE not found"
             | [("ORE", n)] <- H.toList toCook = n
             | otherwise = cookNext
@@ -96,6 +96,26 @@ walk recipes = go recipes $ singleton "FUEL" 1
                 Recipe ingredients (Ingredient producesN _) = recipeFor result rs
                 timesToCook = demandN `div` producesN + (if demandN `mod` producesN > 0 then 1 else 0)
                 scale m (Ingredient n e) = Ingredient (n * m) e
+
+addToBag :: [Ingredient] -> HashMap Text Int -> HashMap Text Int
+addToBag stuff bag = H.unionWith (+) bag $ H.fromList $ map (\(Ingredient c e) -> (e, c)) $ stuff
+
+removeFromBag :: [Recipe] -> HashMap Text Int -> (Ingredient, HashMap Text Int)
+removeFromBag recipes bag = (Ingredient c e, bag')
+    where
+        ((e, c) : _) = filter isReadyToCook $ H.toList bag
+        isReadyToCook (item, _) = not . any (\ recipe -> recipeConsumes item recipe) $ recipes        
+        bag' = H.delete e bag
+
+recipeConsumes :: Text -> Recipe -> Bool
+recipeConsumes e (Recipe ingredients _) = any (\(Ingredient _ e') -> e == e') ingredients
+
+part1 :: IO Int
+part1 = walk <$> readRecipes "src/day14Input.txt"
+
+oneTrillion :: Int
+oneTrillion = 1000000000000
+
 
 -- Ingredient {count = 1, element = "E"},
 -- Ingredient {count = 10, element = "ORE"},
