@@ -81,8 +81,8 @@ recipeFor result recipes = case foundRecipes of
 --         lesser = filter (< p) xs
 --         greater = filter (>= p) xs
 
-walk :: [Recipe] -> Int
-walk recipes = go recipes $ singleton "FUEL" 1
+walk :: Int -> [Recipe] -> Int
+walk count recipes = go recipes $ singleton "FUEL" count
     where 
         go rs toCook
             | H.null toCook = error "404 ORE not found"
@@ -111,10 +111,35 @@ recipeConsumes :: Text -> Recipe -> Bool
 recipeConsumes e (Recipe ingredients _) = any (\(Ingredient _ e') -> e == e') ingredients
 
 part1 :: IO Int
-part1 = walk <$> readRecipes "src/day14Input.txt"
+part1 = walk oneTrillion <$> readRecipes "src/day14Input.txt"
 
 oneTrillion :: Int
 oneTrillion = 1000000000000
+
+-- part2 :: IO Int
+-- part2 = go 0 oneTrillion (oneTrillion/2)
+--     where 
+--         recipes = readRecipes "src/day14Input.txt"
+--         go :: Int -> Int -> Int -> IO Int
+--         go l u c 
+--             | fuel < upper = go c u (c + (u-c)/2)
+--             | fuel >= upper = go l c (l + (c-l)/2)
+--             | l >= u = c
+--                 where 
+--                     fuel = walk c <$> recipes
+--                     upper = walk u <$> recipes
+--                     lower = walk l <$> recipes
+
+find_ :: Int -> Int -> Int -> (Int -> Int) -> Int
+find_ lowerBound upperBound max f
+    | actual == max = max
+    | actual <= max = find_ current upperBound max f
+    | actual >= max = find_ lowerBound current actual f
+    where 
+        actual :: Int
+        actual = f current
+        current :: Int
+        current = (lowerBound + ((upperBound - lowerBound) `div` 2))
 
 
 -- Ingredient {count = 1, element = "E"},
